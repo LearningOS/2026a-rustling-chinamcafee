@@ -2,34 +2,30 @@
 	queue
 	This question requires you to use queues to implement the functionality of the stac
 */
-// I AM NOT DONE
+use std::collections::VecDeque;
 
 #[derive(Debug)]
 pub struct Queue<T> {
-    elements: Vec<T>,
+    elements: VecDeque<T>,
 }
 
 impl<T> Queue<T> {
     pub fn new() -> Queue<T> {
         Queue {
-            elements: Vec::new(),
+            elements: VecDeque::new(),
         }
     }
 
     pub fn enqueue(&mut self, value: T) {
-        self.elements.push(value)
+        self.elements.push_back(value)
     }
 
     pub fn dequeue(&mut self) -> Result<T, &str> {
-        if !self.elements.is_empty() {
-            Ok(self.elements.remove(0usize))
-        } else {
-            Err("Queue is empty")
-        }
+        self.elements.pop_front().ok_or("Queue is empty")
     }
 
     pub fn peek(&self) -> Result<&T, &str> {
-        match self.elements.first() {
+        match self.elements.front() {
             Some(value) => Ok(value),
             None => Err("Queue is empty"),
         }
@@ -47,35 +43,35 @@ impl<T> Queue<T> {
 impl<T> Default for Queue<T> {
     fn default() -> Queue<T> {
         Queue {
-            elements: Vec::new(),
+            elements: VecDeque::new(),
         }
     }
 }
 
 pub struct myStack<T>
 {
-	//TODO
 	q1:Queue<T>,
 	q2:Queue<T>
 }
 impl<T> myStack<T> {
     pub fn new() -> Self {
         Self {
-			//TODO
-			q1:Queue::<T>::new(),
+				q1:Queue::<T>::new(),
 			q2:Queue::<T>::new()
         }
     }
     pub fn push(&mut self, elem: T) {
-        //TODO
+        self.q2.enqueue(elem);
+        while !self.q1.is_empty() {
+            self.q2.enqueue(self.q1.dequeue().expect("queue is not empty"));
+        }
+        std::mem::swap(&mut self.q1, &mut self.q2);
     }
     pub fn pop(&mut self) -> Result<T, &str> {
-        //TODO
-		Err("Stack is empty")
+        self.q1.dequeue().map_err(|_| "Stack is empty")
     }
     pub fn is_empty(&self) -> bool {
-		//TODO
-        true
+        self.q1.is_empty()
     }
 }
 
